@@ -7,8 +7,7 @@ import sys
 import urllib.parse
 
 # INFO  - 2018-11-12 08:42:22.162; org.apache.solr.core.SolrCore; [core1]
-LINE_RE = re.compile(
-    r"INFO.*?\[(?P<core>\w+)\]\s+webapp=/\w+\s+path=(?P<path>/\w+)\s+params={(?P<search>.*)}\s+(hits=(?P<hits>\w+)\s+)?status=\w+\s+QTime=(?P<qtime>\w+).*")
+LINE_RE = re.compile(r".*INFO.*?\[(?P<core>\w+)\]\s+webapp=/\w+\s+path=(?P<path>/\w+)\s+.*?\+\((?P<search>.*)\)\&d.*?\s+(hits=(?P<hits>\w+)\s+)?status=\w+\s+QTime=(?P<qtime>\w+).*")
 FACET_FIELD_RE = re.compile(r"facet.field=(.+?)(&|$)")
 """
 lines we want:
@@ -50,7 +49,7 @@ class CoreCounter(object):
         for index, item in enumerate(top):
             label, cnt = item
             s += 'QUERY %i: %i %s \n\n  "%s"\n\n' % (index + 1, cnt, unit, label)
-        return s
+        return s.replace("%2B","").replace("+", " ")
 
     def print_top_items(self, n, counter, title, unit):
         """Print the top N entries of a counter with its title.
